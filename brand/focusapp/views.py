@@ -642,6 +642,12 @@ def checkout(request):
     for item in cart:
         total_price += item.product.price * item.quantity 
 
+    # if addr is :
+    #     messages.info(request,'product out of stock')
+    #     return redirect('cart')
+    
+        
+
     if 'coupons' in request.session:
         coupons = request.session['coupons']
         coup = Coupon.objects.get(coupon_code =coupons )
@@ -831,7 +837,7 @@ def single_order(request,id):
     order_item = order.objects.get(id=id)
     print(order_item,'nowfan')
     
-    print(cart_items,"pood12121")
+    
 
     # orderr=order.objects.values_list('id', flat=True)
   
