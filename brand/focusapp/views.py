@@ -175,7 +175,7 @@ def ForgetPassword(request):
         else:
              messages.success(request, 'Not user found with this username and email.')
              return redirect('forget_password')
-    return render(request,"Forgotpage.html")
+    return render(request,"forgotpage.html")
 def password_otp(request):
     otp = request.session['otp'] 
     
@@ -784,6 +784,7 @@ def placeorder(request):
         prod.quantity = prod.quantity-item.quantity
         prod.save()
         # prod.delete()
+        cart.delete()
     
 
     return render(request,'confirmation.html',locals())

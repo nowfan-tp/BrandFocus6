@@ -132,6 +132,7 @@ def search_category(request):
 #usermngmt----------------
 def user_view(request):
     user=users.objects.all()
+    print(user,"rttttttttttttttttttt")
     context={'user':user}
     return render(request,"users.html",context)
 
