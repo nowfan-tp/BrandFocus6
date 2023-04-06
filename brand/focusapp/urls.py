@@ -17,13 +17,14 @@ urlpatterns = [
     path('login',views.login,name='login'),
     path('',views.index,name='index'),
     path('logout',views.logout,name='logout'),
-    # path('CustomPasswordResetView',views.CustomPasswordResetView,name='CustomPasswordResetView'),
+   
     path('search_index',views.search_index,name='search_index'),
     path('search_catogory',views.search_catogory,name='search_catogory'),
     path('blog',views.blog,name='blog'),
     path('ForgetPassword',views.ForgetPassword,name='ForgetPassword'),
     path('password_otp',views.password_otp,name='password_otp'),
     path('repassword',views.repassword,name='repassword'),
+    # path('coupon_view',views.coupon_view,name='coupon_view'),
 #   ..................................forgot pasword................................ 
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),

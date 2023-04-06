@@ -24,13 +24,12 @@ from django.core.paginator import Paginator, PageNotAnInteger
 from django.http import JsonResponse
 from django.core import serializers
 
-
 from django.http import HttpResponse
 from django.template.loader import get_template
 from django.template import Context
 from razorpay.errors import BadRequestError
 
-
+from django.urls import reverse
 import os
 
 
@@ -174,7 +173,7 @@ def ForgetPassword(request):
                 
         else:
              messages.success(request, 'Not user found with this username and email.')
-             return redirect('forget_password')
+             return redirect('ForgetPassword')
     return render(request,"forgotpage.html")
 def password_otp(request):
     otp = request.session['otp'] 
@@ -233,6 +232,7 @@ def login(request):
         print(password)
 
         if user is not None:
+            auth.login(request,user)
             request.session['name']=email
             print('index')
           
@@ -377,7 +377,7 @@ def view_wishlist(request):
     return render(request, 'wish_list.html', {'wish_items': wish_items, 'total_price': total_price,'ids':ids})
 
 
-
+@login_required(login_url='login')
 def add_to_wish(request,id):
   
     product =products.objects.get(id=id)
@@ -427,50 +427,50 @@ def cart(request):
         
     return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price })
 
+
+
+@login_required(login_url='login')
 def add_to_cart(request,id):
-  
     procart = products.objects.get(id=id)
-    # product_total=procart.price*procart.quantity
-    # print(product_total)
- 
+    
     if procart.quantity == 0:
-        messages.info(request,'product out of stock')
+        messages.info(request, 'Product is out of stock')
         return redirect('cart')
     
     else:
+        cust = None
         
-
-
-        cust=users.objects.get(email=request.session.get('name'))
-        
-        
-        if Cart.objects.filter(product = procart ,user=cust):
-
-            cartitem = Cart.objects.get(product = procart)
-            cartitem.quantity += 1
-            cartitem.save()
+        if request.user.is_authenticated:
+            cust = request.user
             
-            # sin_price = Cart.objects.get(price = procart)
-            # sin_price.save()
+        
+        if cust:
+            if Cart.objects.filter(product=procart, user=cust):
+                cartitem = Cart.objects.get(product=procart)
+                cartitem.quantity += 1
+                cartitem.save()
+                
+                return redirect('cart')
+                
+            else:
+                cartitem = Cart(product=procart, user=cust, quantity=1)
+                cartitem.save()
+                
+                return redirect('cart')
+        
+        else:
+            # redirect to login page
+            login_url = reverse('login')
+            messages.info(request, 'please login')
+            return redirect(login_url)
 
 
-            
-            # if  procart.quantity < cartitem.quantity:
-            #     message.info(request,'item out of stock')
-            return redirect('cart')
-               
 
-        else:    
-            cartitem = Cart(product =procart ,user=cust,quantity=1)
-            cartitem.save()
-    
-   
-            return redirect('cart')
 
 
 def update_cart(request):
-    cust=users.objects.get(email=request.session.get('name'))
-   
+    cust=request.user
+    
     if request.method == 'POST':
         total = 0
         sub_total=0
@@ -522,7 +522,7 @@ def remove_cart(request,id):
 
     
 def add_address(request):
-    user=users.objects.get(email=request.session.get('name'))
+    user=request.user
     return render(request,'add_address.html',{'user':user})
 
 
@@ -618,7 +618,7 @@ def search_catogory(request):
         return render(request,'category.html',context)
 
 def default(request,id):
-    cust=users.objects.get(email=request.session.get('name'))
+    cust=request.user
     addrs=Address.objects.filter(user=cust)
     defaultaddress=Address.objects.get(id=id)
     print(defaultaddress)
@@ -635,29 +635,42 @@ def default(request,id):
 def checkout(request):
     total_price = 0
     discount = 0
+    coupons = 0
+    Used_Coupons=0
+    used=0
+   
+    user = request.user
+    unused_coupons = Coupon.objects.exclude(usedcoupoon__user=user)
     
-    user = users.objects.get(email=request.session.get('name'))
+    
+    
     cart = Cart.objects.filter(user=user)
     addr = Address.objects.filter(user=user,is_difault=True)
     for item in cart:
         total_price += item.product.price * item.quantity 
 
-    # if addr is :
+    # if addr is none:
     #     messages.info(request,'product out of stock')
     #     return redirect('cart')
     
-        
-
+    cop =Coupon.objects.all()   
+    
     if 'coupons' in request.session:
         coupons = request.session['coupons']
+        
         coup = Coupon.objects.get(coupon_code =coupons )
-        print(coup)
         discount = coup.discount
         print(discount)
         messages.info(request,'')
-        Usedcoupoon.objects.create(user = user,Coupon = coup)
-    coupon = Coupon.objects.all()
-    
+       
+       
+        Used_Coupons=Usedcoupoon.objects.filter(user=user) 
+        for i in Used_Coupons:
+            used=i.coupon.coupon_code
+            
+        if coupons != used:
+            Usedcoupoon.objects.create(user = user,coupon = coup )
+
 
     order_totel=total_price + 75
     shipping = 20
@@ -665,7 +678,7 @@ def checkout(request):
     print(payable,'payable')
     amount_in_paisa = int(payable * 100)  
     print(amount_in_paisa,'anount')
-    # client = razorpay.Client(auth = (settings.key,settings.secret))
+    
     client = razorpay.Client(auth = (settings.KEY,settings.SECRET))
 
     order_data = {
@@ -675,37 +688,41 @@ def checkout(request):
 
 
     payment = client.order.create(data=order_data)
-    # context = {
-    #     'order_totel':order_totel,
-    #     'shipping':shipping,
-    #     'payment':payment,
-
-
-    # }
-   
-  
    
     print(payment)
     return render(request,'checkout.html',locals())
 
 
+
+
 def applycoupon(request):
+    cust=request.user
+   
+
+
+
     if request.method == 'POST':
-        coupons=request.POST.get('coupon')
-        print(coupons)
-        coup= Coupon.objects.filter(coupon_code=coupons)
-        print(coup)
-
-
-        if coup:
-
+        coupons=request.POST.get("coupon")
+        ued=Usedcoupoon.objects.filter(user=cust)
+        coup=Coupon.objects.filter(coupon_code=coupons).first()
+        used=False
+        for item in ued:
+             if item.coupon.coupon_code == coupons:
+                   used=True
+             
+        
+        if used == True:
+             messages.info(request,'Sorry This coupon is already used')
+             return redirect('checkout')
+             
+        else:   
+           if coup:
+            
             request.session['coupons'] = coupons
-            return redirect('checkout')
-
-        else:
-            print('fnjdnjvfd')
+            return redirect("checkout")
+           else:
             messages.info(request,'invalid coupon')
-            return redirect('checkout')
+            return redirect("checkout")
 
 def placeorder(request):
 
@@ -713,8 +730,15 @@ def placeorder(request):
     discount=0
     catr_total_price = 0
     
-    cust=users.objects.get(email=request.session.get('name'))
+   
+    cust=request.user
+   
     addr = Address.objects.filter(user=cust,is_difault=True)
+    
+
+    
+
+    
     
     payment_id = 'none'
     cart = Cart.objects.filter(user = cust)
@@ -752,7 +776,7 @@ def placeorder(request):
 
     orders = order.objects.create(user = cust,
                                  total_price = payable,
-                                 Addres = Address.objects.get(user=cust,is_difault=True),
+                                 Addres= Address.objects.get(user=cust,is_difault=True),
                                  tracking_no = tracking_no,
                                  payment_mode = payment_mode,
                                  payment_id = payment_id,
@@ -793,9 +817,15 @@ def placeorder(request):
 
 
 
+
+
+
 def view_order(request):
+
     
-    cust=users.objects.get(email=request.session.get('name'))
+    cust=request.user
+    
+      
     cart_items = order.objects.filter(user=cust)
     # print(cart_items,"tgfttgg")
     # for i in cart_items:
@@ -832,7 +862,7 @@ def view_order(request):
     return render(request,'view_order.html',context)
 
 def single_order(request,id):
-    cust=users.objects.get(email=request.session.get('name'))
+    cust=request.user
   
     cart_items = orderitem.objects.filter(orderit=id)
     order_item = order.objects.get(id=id)
@@ -859,7 +889,7 @@ def single_order(request,id):
     
 
 def single_order_fetch(request,id):
-    cust = users.objects.get(email=request.session.get('name'))
+    cust = request.user
     cart_items = orderitem.objects.filter(orderit=id)
     order_item =order.objects.filter(id=id)
     print(order_item,'amal')
@@ -967,7 +997,7 @@ def blog(request):
 
 
 def edit_profile(request):
-    cust=users.objects.get(email=request.session.get('name'))
+    cust=request.user
     try:
         user_profile = UserProfilepic.objects.get(user=cust)
     except UserProfilepic.DoesNotExist:
@@ -982,7 +1012,7 @@ def edit_profile(request):
     return render(request, 'edit_profile.html', {'user_profile': user_profile})
 
 def delete_profile_picture(request):
-   cust=users.objects.get(email=request.session.get('name'))
+   cust=request.user
    user_profile = UserProfilepic.objects.filter(user=cust.id).first()
    print(user_profile)
    user_profile.delete()
@@ -993,7 +1023,7 @@ def cancelorder_raz(request,id):
     total=0
     
    
-    cust=users.objects.get(email=request.session.get('name'))
+    cust=request.user
     ordd =orderitem.objects.filter(id=id).filter(user=cust).first()
     ordrfnd= order.objects.get(id = id)
    

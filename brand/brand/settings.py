@@ -162,3 +162,6 @@ EMAIL_HOST_PASSWORD = 'jjuojfkndvlbzhee' # Replace with your email password or a
 
 KEY = 'rzp_test_6lIsuXRQbFxRKa'
 SECRET = 'MxfeXY6XPZcXH76bx0m7ORs0'
+
+
+LOGIN_URL ='login'

@@ -153,128 +153,7 @@
 </section>
 
 
-<!-- <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
-<script>
-  async function generateInvoice() {
-    const response = await fetch("/single_order_fetch/" + window.location.href.split("/").pop());
-    const datas = await response.json();
-    let order_item = JSON.parse(datas.order_item);
-    let payMode =order_item[0].fields.payment_mode
 
-    // let orderr = JSON.parse(datas.orderr);
-    // let prod = JSON.parse(datas.prod);
-    // let user = JSON.parse(datas.user);
-    
-    // let cust = JSON.parse(datas.cust);
-    console.log(payMode,'9999999',order_item);
-    // console.log(cartitems);
-    // console.log(prod);
-    // console.log(user);
-    // console.log(cust);
-    const data = {
-      // Customize enables you to provide your own templates
-      // Please review the documentation for instructions and examples
-      customize: {
-        //  "template": fs.readFileSync('template.html', 'base64') // Must be base64 encoded html
-      },
-      images: {
-        // The logo on top of your invoice
-        logo: "https://public.easyinvoice.cloud/img/logo_en_original.png",
-        // The invoice background
-        background: "https://public.easyinvoice.cloud/img/watermark-draft.jpg",
-      },
-      // Your own data
-      sender: {
-        company: "BandFocus",
-        address: " Street 123",
-        zip: "1254 AB",
-        city: "elactonic city",
-        country: "India",
-        //"custom1": "custom value 1",
-        //"custom2": "custom value 2",
-        //"custom3": "custom value 3"
-      },
-      // Your recipient
-      
-      client: {
-        Name : user[0].fields.first_name,
-        Email: user[0].fields.email,
-        Payment:payMode,
-        
-        city: "Clientcity",
-        country: "Clientcountry",
-        // "custom1": "custom value 1",
-        // "custom2": "custom value 2",
-        // "custom3": "custom value 3"
-      },
-      information: {
-        // Invoice number
-        number: "2021.0001",
-        // Invoice data
-        date: "12-12-2021",
-        // Invoice due date
-        "due-date": "31-12-2021",
-      },
-      // The products you would like to see on your invoice
-      // Total values are being calculated automatically
-     
-      products: [
-        {
-          quantity:cartitems[0].fields.quantity,
-          products:prod[0].fields.name,
-          "tax-rate": 75,
-          price:orderr[0].fields.total_pric,
-             Payment:payMode,
-          Payment_Id:orderr[0].fields.payment_id,
-      },
-        {
-          quantity: 4.1,
-          description: "Product 2",
-          "tax-rate": 6,
-          price: 12.34,
-        },
-        {
-          quantity: 4.5678,
-          description: "Product 3",
-          "tax-rate": 21,
-          price: 6324.453456,
-        },
-      ],
-      // The message you would like to display on the bottom of your invoice
-      "bottom-notice": "Kindly pay your invoice within 15 days.",
-      // Settings to customize your invoice
-      settings: {
-        currency: "INR", // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
-        // "locale": "nl-NL", // Defaults to en-US, used for number formatting (See documentation 'Locales and Currency')
-        // "tax-notation": "gst", // Defaults to 'vat'
-        // "margin-top": 25, // Defaults to '25'
-        // "margin-right": 25, // Defaults to '25'
-        // "margin-left": 25, // Defaults to '25'
-        // "margin-bottom": 25, // Defaults to '25'
-        // "format": "A4", // Defaults to A4, options: A3, A4, A5, Legal, Letter, Tabloid
-        // "height": "1000px", // allowed units: mm, cm, in, px
-        // "width": "500px", // allowed units: mm, cm, in, px
-        // "orientation": "landscape", // portrait or landscape, defaults to portrait
-      },
-      // Translate your invoice to your preferred language
-      translate: {
-        // "invoice": "FACTUUR",  // Default to 'INVOICE'
-        // "number": "Nummer", // Defaults to 'Number'
-        // "date": "Datum", // Default to 'Date'
-        // "due-date": "Verloopdatum", // Defaults to 'Due Date'
-        // "subtotal": "Subtotaal", // Defaults to 'Subtotal'
-        // "products": "Producten", // Defaults to 'Products'
-        // "quantity": "Aantal", // Default to 'Quantity'
-        // "price": "Prijs", // Defaults to 'Price'
-        // "product-total": "Totaal", // Defaults to 'Total'
-        // "total": "Totaal" // Defaults to 'Total'
-      },
-    };
-    easyinvoice.createInvoice(data, function (result) {
-    easyinvoice.download("myInvoice.pdf", result.pdf);
-    });
-  }
-</script> -->
 <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
 <script>
   async function generateInvoice() {
@@ -292,7 +171,7 @@
     const data = {
       images: {
         logo: "https://wallpapercave.com/wp/wp8124681.jpg",
-        // background: "https://thumbs.dreamstime.com/z/sneakers-outline-drawing-black-lines-sport-shoe-white-background-sneaker-template-outline-vector-illustration-sneakers-232829698.jpg",
+        background: "https://e1.pxfuel.com/desktop-wallpaper/466/677/desktop-wallpaper-%E2%96%B7-100-ideas-for-a-cool-nike-for-the-fans-of-the-brand-orange-nike.jpg",
       },
       sender: {
         company: "BandFocus",
@@ -304,25 +183,16 @@
       client: {
         "company":datas.name,
         "address":datas.userAddress,
-        // name: order_item[0].fields.customer_name,
-        // email: order_item[0].fields.customer_email,
-        //payment: 'nowfan'//payMode,totalPrice
-        // city: order_item[0].fields.customer_city,
-        // country: order_item[0].fields.customer_country,
+        
       },
       information: {
         // number: order_item[0].pk,
         date: order_item[0].fields.order_date,
         // "due-date": order_item[0].fields.payment_due_date,
       },
-      //products: order_item[0].fields.items && Array.isArray(order_item[0].fields.items) ? order_item[0].fields.items.map((item) => ({
-      //  quantity: item.quantity,
-       // description:'nowfan' ,//item.product_name
-        // "tax-rate": item.tax_rate,
-       // price:500 ,//totalPrice,item.price
-     // })) : [],
+      
       products : datas.d,
-      "bottom-notice": "Kindly pay your invoice within 15 days.",
+      
       settings: {
         currency: order_item[0].fields.currency,
       },

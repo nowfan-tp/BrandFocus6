@@ -22,7 +22,7 @@ from django.db.models.functions import TruncMonth
 
 
 # Create your views here.
-
+# @login_required(login_url='admin')
 def admin(request):
     if 'user' in request.session:
         return redirect('admin_index')
@@ -33,7 +33,7 @@ def admin(request):
         if user is not None:
 
             if user.is_superuser:
-
+                auth.login(request,user)
                 request.session['user']=email
             
                 return redirect('admin_index')
@@ -45,8 +45,11 @@ def admin(request):
 
 
 @cache_control(no_cache=True,must_revalidate=True,no_store=True)
+@login_required(login_url='login')
 def admin_index(request):
-
+    cust = request.user
+    print(cust,'iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii')
+    print('uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu')
     if 'user' in request.session:
         objs = users.objects.all()
         return render(request,'admin_index.html',{'objs': objs})
@@ -132,7 +135,7 @@ def search_category(request):
 #usermngmt----------------
 def user_view(request):
     user=users.objects.all()
-    print(user,"rttttttttttttttttttt")
+    print(user,"rttttttttttttttt")
     context={'user':user}
     return render(request,"users.html",context)
 
@@ -366,8 +369,10 @@ def deliverd_order(request,id):
 
     return redirect('view_orders')
 
-
+@login_required(login_url='login')
 def chart(request):
+    cust =request.user
+    print(cust,"ttttttttttttttttttttttttttttttttttttttttt")
     user=users.objects.all().count()   
     ordercount=order.objects.all().count() 
     orderlist=orderitem.objects.all()

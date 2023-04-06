@@ -5,3 +5,5 @@ from .models import*
 admin.site.register(Category)
 admin.site.register(brands)
 admin.site.register(products)
+admin.site.register(Coupon)
+admin.site.register(Usedcoupoon)

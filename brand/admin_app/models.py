@@ -48,10 +48,9 @@ class Coupon(models.Model):
     discount = models.DecimalField(max_digits=10, decimal_places=6)
     is_active = models.BooleanField(default=True)
 
-
 class Usedcoupoon(models.Model):
     user=models.ForeignKey(users,on_delete=models.CASCADE,null=True)
-    Coupon=models.ForeignKey(Coupon,on_delete=models.CASCADE,null=True)
+    coupon=models.ForeignKey(Coupon,on_delete=models.CASCADE,null=True)
 
 
 
