@@ -164,4 +164,4 @@ KEY = 'rzp_test_6lIsuXRQbFxRKa'
 SECRET = 'MxfeXY6XPZcXH76bx0m7ORs0'
 
 
-LOGIN_URL ='login'
+
