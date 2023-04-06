@@ -211,7 +211,7 @@ var options = {
     "name": "brandfocus",
     "description": "Purchase",
     "image": "https://example.com/your_logo",
-    //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     "prefill": {
         "email": "{{user.email}}",
         "contact": "{{addr.mobile}}"
