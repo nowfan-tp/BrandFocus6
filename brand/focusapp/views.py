@@ -174,7 +174,7 @@ def ForgetPassword(request):
         else:
              messages.success(request, 'Not user found with this username and email.')
              return redirect('ForgetPassword')
-    # return render(request,"forgotpage.html")
+    return render(request,"forgotpage.html")
 def password_otp(request):
     otp = request.session['otp'] 
     

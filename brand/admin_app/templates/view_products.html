@@ -25,9 +25,9 @@
                     <th scope="col"> Name</th>
                     <th scope="col"> price</th>
                     <th scope="col"> image</th>
-                    <th scope="col"> price</th>
                     <th scope="col"> Category</th>
-                    <th scope="col">Edite</th>
+                    
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,7 +49,8 @@
                   
                
                   <td><a href="./delete_product/{{items.id}}"><button type="button" class="btn btn-outline-danger m-2">DELETE</button></a></td>
-                  <td><a href="{% url 'update_products' items.id %}"> <button type="button" class="btn btn-outline-success m-2">UPDATE</button></a></td>
+                  <td><a href="{% url 'update_products' items.id %}"> <button type="button" class="btn btn-outline-success m-2">UPDATE</button></a>
+                </td>
                   {% endfor%}
                   
                   
