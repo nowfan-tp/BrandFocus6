@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-# from django.contrib.auth.models import User,auth
+from django.contrib.auth import authenticate
 from user_area.models import users
 # User = settings.AUTH_USER_MODEL
 from django.contrib import messages
@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.db.models.functions import TruncMonth
+from django.contrib import auth
 
 
 # from chartit import DataPool, plotly

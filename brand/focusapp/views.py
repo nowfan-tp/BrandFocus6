@@ -731,9 +731,11 @@ def placeorder(request):
     catr_total_price = 0
     
    
-    cust=request.user
+    cust = users.objects.get(email=request.session.get('name'))
+    print(cust,'lllllllllllllllllllllllllllllllllllllllllllllllll')
    
     addr = Address.objects.filter(user=cust,is_difault=True)
+    print(addr,'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
     
 
     
