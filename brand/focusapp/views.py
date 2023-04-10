@@ -371,6 +371,7 @@ def view_wishlist(request):
     # wish = wishlist.objects.get(product=product)
     # print(wish,"yyyyyyyyyy")
     total_price = 0
+    ids = 0
     for item in wish_items:
         ids=item.product.id
         total_price += item.product.price * item.quantity
